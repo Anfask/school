@@ -1,5 +1,22 @@
-import { Day, PrismaClient, UserSex } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
+
+// Define the Day enum manually since it's not exported from @prisma/client
+enum Day {
+  MONDAY = "MONDAY",
+  TUESDAY = "TUESDAY",
+  WEDNESDAY = "WEDNESDAY",
+  THURSDAY = "THURSDAY",
+  FRIDAY = "FRIDAY",
+  SATURDAY = "SATURDAY",
+  SUNDAY = "SUNDAY"
+}
+
+// Define the UserSex enum manually since it's not exported from @prisma/client
+enum UserSex {
+  MALE = "MALE",
+  FEMALE = "FEMALE"
+}
 
 async function main() {
   // ADMIN
@@ -76,14 +93,13 @@ async function main() {
 
   // LESSON
   for (let i = 1; i <= 30; i++) {
+    const dayValues = Object.values(Day);
+    const randomDay = dayValues[Math.floor(Math.random() * dayValues.length)];
+    
     await prisma.lesson.create({
       data: {
         name: `Lesson${i}`, 
-        day: Day[
-          Object.keys(Day)[
-            Math.floor(Math.random() * Object.keys(Day).length)
-          ] as keyof typeof Day
-        ], 
+        day: randomDay, 
         startTime: new Date(new Date().setHours(new Date().getHours() + 1)), 
         endTime: new Date(new Date().setHours(new Date().getHours() + 3)), 
         subjectId: (i % 10) + 1, 
